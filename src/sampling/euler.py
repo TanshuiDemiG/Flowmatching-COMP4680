@@ -1,9 +1,11 @@
 import torch
 
-def sample(model, n=2000, steps=50, device="cuda"):
+
+def sample(model, n=2000, dim=2, steps=50, device="cuda"):
+
     model.eval()
 
-    z = torch.randn(n, 2).to(device)
+    z = torch.randn(n, dim).to(device)
 
     dt = 1.0 / steps
 
