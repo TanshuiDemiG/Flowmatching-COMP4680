@@ -1,31 +1,26 @@
-# experiments/part1_run.py
-
 import torch
 
 from dataloader import get_dataloader
-from model import FlowMLP
+from models.flow_mlp import FlowMLP
+from training.train import train
+from sampling.euler import sample
+from utils.plot import plot
 
-from part1_train import train
-from part1_sample import sample
-from utils.plot import plot_points
-
-
-# =========================
-# config
-# =========================
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
+# =========================
+# config (Part 1 only)
+# =========================
 dataset_name = "swiss_roll"
 dim = 2
 
 # =========================
-# data loader
+# data
 # =========================
 loader = get_dataloader(
     name=dataset_name,
     dim=dim,
-    batch_size=1024,
-    shuffle=True
+    batch_size=1024
 )
 
 # =========================
@@ -45,6 +40,6 @@ model = train(model, loader, optimizer, device, steps=20000)
 samples = sample(model, device=device)
 
 # =========================
-# plot results
+# plot
 # =========================
-plot_points(samples, title="Part 1 Generated Samples")
+plot(samples, title="Part 1 Result")
