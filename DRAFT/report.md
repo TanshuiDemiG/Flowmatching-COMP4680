@@ -10,8 +10,6 @@ This report investigates flow matching models under different prediction paramet
 
 Furthermore, we explore efficient sampling strategies based on MeanFlow, which extends standard flow matching by incorporating horizon-aware velocity modeling for improved few-step generation.
 
-
-
 本报告研究了在不同预测参数化方案（包括x预测、ε预测和v预测）下的流匹配模型。我们的目标是了解不同的参数化方案如何影响模型在低维和高维场景下的性能。特别是，我们研究了随着环境维度增加这些方法的可扩展性，并分析了是否可以通过架构或训练调整来缓解v预测中的失效问题。
 
 此外，我们还探索了基于MeanFlow的高效采样策略，该方法通过引入具有时域意识的速度建模来扩展标准流匹配，从而改善了多步流生成。
@@ -87,9 +85,14 @@ We conduct experiments on three synthetic datasets: Swiss roll, 8-mode Gaussian,
 
 # 3. Part 1: Warm-up Results (D=2 Sanity Check)
 
-We first validate the correctness of our implementation using low-dimensional settings (D=2). Across all three toy datasets, the model successfully learns the underlying data distributions. The generated samples exhibit correct geometric structures, including spiral patterns, clustered Gaussian modes, and circular manifolds.
+I first validate the correctness of our implementation using low-dimensional settings (D=2). Across all three toy datasets, the model successfully learns the underlying data distributions. The generated samples exhibit correct geometric structures, including spiral patterns, clustered Gaussian modes, and circular manifolds.
 
 Additionally, we verify that high-dimensional samples projected back into 2D preserve the original structure, confirming the correctness of the projection pipeline.
+
+
+我首先通过低维设置（D=2）验证了我们实现方案的正确性。在所有三个示例数据集上，模型都成功学习到了底层数据分布。生成的样本展现出了正确的几何结构，包括螺旋图案、簇状高斯模态以及圆形流形。
+
+此外，我们验证了高维样本投影回2D后仍能保留原始结构，从而证实了投影流程的正确性。
 
 ## 📊 Results (Figures to be inserted)
 
