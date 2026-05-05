@@ -1,4 +1,4 @@
-project/
+src/
 │
 ├── data/
 │   ├── swiss_roll.npz
@@ -29,14 +29,6 @@ project/
 │   ├── logger.py
 │
 └── outputs/
-
-
-
-
-
-
-
-
 
 • Part 1: Verify a basic flow matching setup on 2D data.
 • Part 2: Systematically compare prediction parameterizations and reproduce the paper’s
