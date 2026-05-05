@@ -1,98 +1,65 @@
-# import torch
-# from model import FlowMLP
-# from data import ToyDataset
-
-# # =========================
-# # Training config (Part 1 only)
-# # =========================
-# device = "cuda" if torch.cuda.is_available() else "cpu"
-
-# dataset = ToyDataset("swiss")
-# model = FlowMLP().to(device)
-
-# opt = torch.optim.Adam(model.parameters(), lr=1e-3)
-
-# # =========================
-# # Training loop
-# # =========================
-# for step in range(25000):
-
-#     # -------------------------
-#     # 1. sample data
-#     # -------------------------
-#     x = dataset.sample(1024).to(device)
-
-#     # -------------------------
-#     # 2. sample noise
-#     # -------------------------
-#     eps = torch.randn_like(x)
-
-#     # -------------------------
-#     # 3. sample time t
-#     # -------------------------
-#     t = torch.rand(x.shape[0], 1).to(device)
-
-#     # -------------------------
-#     # 4. forward process
-#     # z_t = (1-t)x + tε
-#     # -------------------------
-#     z = (1 - t) * x + t * eps
-
-#     # -------------------------
-#     # 5. target (v-pred)
-#     # v = ε - x
-#     # -------------------------
-#     v_target = eps - x
-
-#     # -------------------------
-#     # 6. model prediction
-#     # -------------------------
-#     v_pred = model(z, t.squeeze())
-
-#     # -------------------------
-#     # 7. loss
-#     # -------------------------
-#     loss = ((v_pred - v_target) ** 2).mean()
-
-#     opt.zero_grad()
-#     loss.backward()
-#     opt.step()
-
-#     if step % 1000 == 0:
-#         print(f"step {step}, loss {loss.item():.4f}")
-from dataloader import get_dataloader
-from model import FlowMLP
+# experiments/part1_train.py
 
 import torch
 
-device = "cuda"
+def train(model, dataloader, optimizer, device, steps=20000):
+    """
+    Part 1训练：v-prediction baseline
 
-loader = get_dataloader(
-    name="swiss_roll",
-    dim=2,
-    batch_size=1024
-)
+    目标：
+    - 验证flow matching pipeline是否正确
+    """
 
-model = FlowMLP().to(device)
-opt = torch.optim.Adam(model.parameters(), lr=1e-3)
+    model.train()
 
-for step in range(20000):
+    loader_iter = iter(dataloader)
 
-    for x in loader:
+    for step in range(steps):
+
+        try:
+            x = next(loader_iter)
+        except StopIteration:
+            loader_iter = iter(dataloader)
+            x = next(loader_iter)
+
         x = x.to(device)
 
+        # =========================
+        # 1. sample noise
+        # =========================
         eps = torch.randn_like(x)
+
+        # =========================
+        # 2. sample time
+        # =========================
         t = torch.rand(x.shape[0], 1).to(device)
 
+        # =========================
+        # 3. forward process
+        # z_t = (1 - t)x + tε
+        # =========================
         z = (1 - t) * x + t * eps
 
-        v_pred = model(z, t.squeeze())
+        # =========================
+        # 4. target velocity
+        # =========================
         v_target = eps - x
 
+        # =========================
+        # 5. model prediction
+        # =========================
+        v_pred = model(z, t.squeeze())
+
+        # =========================
+        # 6. loss
+        # =========================
         loss = ((v_pred - v_target) ** 2).mean()
 
-        opt.zero_grad()
+        optimizer.zero_grad()
         loss.backward()
-        opt.step()
+        optimizer.step()
 
-        break  # 关键：dataloader循环只取一个batch
+        if step % 1000 == 0:
+            print(f"[Part1] step {step} | loss {loss.item():.4f}")
+
+    return model

@@ -41,14 +41,27 @@
 #     plt.close()
 
 
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 
 # =========================
 # visualization
 # =========================
 
-def plot(x, title=""):
+# utils/plot.py
+
+import matplotlib.pyplot as plt
+
+def plot_points(x, title=""):
+    """
+    Part 1可视化工具
+
+    输入:
+        x: [N,2]
+    """
+
     plt.figure(figsize=(5,5))
-    plt.scatter(x[:,0].cpu(), x[:,1].cpu(), s=1)
+    plt.scatter(x[:,0], x[:,1], s=1)
+
     plt.title(title)
+    plt.axis("equal")
     plt.show()
